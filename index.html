@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Namira Tugas1naja</title>
+<style>
+:root {
+  --pink:#f7dce6;
+  --pink-dark:#a85c7c;
+  --sage:#dceee2;
+  --green:#49765c;
+  --bg:#faf9f7;
+  --text:#34443b;
+  --line:#e7e7e1;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font:14px system-ui,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea,select {font:inherit}
+button {cursor:pointer}
+.container {max-width:1150px;margin:auto;padding:18px}
+header {
+  background:linear-gradient(120deg,#f8dce7,#e2f1e5);
+  border-radius:22px;padding:28px;
+}
+header h1 {font-size:32px;margin:5px 0}
+header p {color:#6c7c71;margin:5px 0}
+.small-title {
+  font-size:11px;letter-spacing:3px;
+  font-weight:800;color:#9d667d;
+}
+.stats {
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin:18px 0;
+}
+.stat,.panel {
+  background:white;border:1px solid var(--line);
+  border-radius:17px;padding:18px;
+}
+.stat:nth-child(2) {background:#fff0f5}
+.stat:nth-child(3) {background:#edf7f0}
+.stat span {font-size:12px;color:#718077}
+.stat strong {display:block;font-size:23px;margin-top:8px}
+.layout {
+  display:grid;grid-template-columns:390px 1fr;
+  gap:16px;align-items:start;
+}
+h2 {font-size:19px;margin:0 0 17px}
+label {display:block;font-size:12px;font-weight:700;margin:12px 0 6px}
+input,textarea,select {
+  width:100%;padding:11px;border:1px solid #e0e6df;
+  border-radius:10px;background:#fdfdfa;color:var(--text);
+}
+textarea {min-height:75px;resize:vertical}
+input:focus,textarea:focus,select:focus {
+  outline:2px solid #c5e2ce;
+}
+.two {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn {
+  border:1px solid #dce5dd;background:white;
+  color:var(--text);border-radius:10px;
+  padding:10px 12px;font-weight:700;font-size:12px;
+}
+.btn-green {background:var(--green);color:white;border-color:var(--green)}
+.btn-pink {background:#f8e1ea;color:#985577}
+.btn-sage {background:#e3f2e7;color:#47775b}
+.btn-red {color:#b65d6e}
+.actions {display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.note {font-size:11px;color:#78877c;line-height:1.6}
+.order {
+  padding:16px;border:1px solid var(--line);
+  border-radius:14px;margin-top:11px;
+}
+.order h3 {font-size:16px;margin:8px 0}
+.order p {font-size:12px;color:#728176;line-height:1.7;margin:5px 0}
+.flex {display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.badge {
+  display:inline-block;padding:5px 9px;
+  border-radius:20px;font-size:10px;font-weight:800;
+}
+.belum {background:#fbe0e9;color:#a64e70}
+.dp {background:#fff0d8;color:#926225}
+.lunas {background:#dff2e5;color:#387651}
+.rem-row {display:flex;gap:7px;margin:8px 0}
+.rem-row input {width:85px}
+.rem-row select {flex:1}
+#orderList {margin-top:13px}
+.modal-bg {
+  position:fixed;inset:0;background:#243e3299;
+  display:none;align-items:center;justify-content:center;
+  padding:15px;z-index:10;
+}
+.modal {
+  width:100%;max-width:440px;max-height:95vh;
+  overflow:auto;background:white;border-radius:17px;
+  padding:18px;
+}
+.receipt {
+  width:320px;max-width:100%;margin:auto;
+  padding:20px 14px;border:1px solid #e6e6e6;
+  font:12px/1.65 monospace;color:#202b24;background:white;
+  overflow-wrap:anywhere;
+}
+.receipt h3 {text-align:center;margin:0;font-size:17px}
+.center {text-align:center}
+.dash {border-top:1px dashed #777;margin:10px 0}
+.rline {display:flex;justify-content:space-between;gap:7px}
+.rline span:last-child {text-align:right}
+.total {font-size:13px;font-weight:900}
+#toast {
+  display:none;position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%);background:#355b46;
+  color:white;padding:12px 17px;border-radius:11px;
+  z-index:30;
+}
+@media(max-width:850px) {
+  .layout {grid-template-columns:1fr}
+  .stats {grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:450px) {
+  .container {padding:11px}
+  header {padding:22px 17px}
+  header h1 {font-size:27px}
+  .stat,.panel {padding:14px}
+  .two {grid-template-columns:1fr}
+  .stat strong {font-size:20px}
+}
+@media print {
+  body * {visibility:hidden!important}
+  #receipt,#receipt * {visibility:visible!important}
+  #receipt {
+    position:absolute;top:0;left:0;
+    width:80mm;border:0;padding:3mm;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+  <div class="small-title">ORDER MANAGEMENT</div>
+  <h1>Namira Tugas1naja</h1>
+  <p>Catat order, pantau deadline, dan kelola pembayaran.</p>
+  <div class="actions">
+    <button class="btn" onclick="backup()">Backup Data</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">Impor Data</button>
+    <button class="btn btn-pink" onclick="enableNotifications()">Aktifkan Notifikasi</button>
+    <input type="file" id="importFile" accept=".json" hidden onchange="importData(event)">
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><span>Total Order</span><strong id="sTotal">0</strong></div>
+  <div class="stat"><span>Deadline Dekat</span><strong id="sNear">0</strong></div>
+  <div class="stat"><span>Uang Diterima</span><strong id="sPaid">Rp0</strong></div>
+  <div class="stat"><span>Sisa Tagihan</span><strong id="sDue">Rp0</strong></div>
+</div>
+
+<div class="layout">
+<section class="panel">
+<h2 id="formTitle">Tambah Order</h2>
+<form id="orderForm">
+<input type="hidden" id="editId">
+
+<div class="two">
+  <div>
+    <label>Nama Pelanggan</label>
+    <input id="customer" required placeholder="Nama pelanggan">
+  </div>
+  <div>
+    <label>4 Digit HP</label>
+    <input id="phone4" maxlength="4" inputmode="numeric" placeholder="4821">
+  </div>
+</div>
+
+<label>Nomor WhatsApp (opsional)</label>
+<input id="whatsapp" placeholder="08xxxxxxxxxx">
+
+<div class="two">
+  <div>
+    <label>Jenis Tugas</label>
+    <input id="kind" required placeholder="Makalah / PPT / Skripsi">
+  </div>
+  <div>
+    <label>Status Pengerjaan</label>
+    <select id="progress">
+      <option>Baru</option>
+      <option>Dikerjakan</option>
+      <option>Revisi</option>
+      <option>Selesai</option>
+    </select>
+  </div>
+</div>
+
+<label>Judul / Topik</label>
+<input id="topic" required placeholder="Judul tugas">
+
+<label>Deadline</label>
+<input id="deadline" type="datetime-local" required>
+
+<label>Detail Lainnya</label>
+<textarea id="details" placeholder="Ketentuan, jumlah halaman, revisi, catatan..."></textarea>
+
+<div class="two">
+  <div>
+    <label>Total Harga (Rp)</label>
+    <input id="price" type="number" min="0" required value="0">
+  </div>
+  <div>
+    <label>Sudah Dibayar (Rp)</label>
+    <input id="paid" type="number" min="0" value="0">
+  </div>
+</div>
+
+<label>Pengingat Deadline</label>
+<div id="reminderRows"></div>
+<button type="button" class="btn btn-sage" onclick="addReminder()">Tambah Pengingat</button>
+<p class="note">Atur H-berapa hari, jam, atau menit. Bisa lebih dari satu pengingat.</p>
+
+<div class="actions">
+  <button type="submit" class="btn btn-green">Simpan Order</button>
+  <button type="button" class="btn" onclick="resetForm()">Kosongkan</button>
+</div>
+</form>
+
+<p class="note">
+Data tersimpan di browser perangkat ini. Gunakan Backup Data untuk menghindari kehilangan data.
+</p>
+</section>
+
+<section class="panel">
+<h2>Daftar Order</h2>
+<input id="search" placeholder="Cari nama, judul, jenis, kode..." oninput="render()">
+<label>Filter Pembayaran</label>
+<select id="filter" onchange="render()">
+  <option value="all">Semua</option>
+  <option value="belum">Belum Bayar</option>
+  <option value="dp">DP</option>
+  <option value="lunas">Lunas</option>
+</select>
+<div id="orderList"></div>
+</section>
+</div>
+</div>
+
+<div class="modal-bg" id="modal">
+<div class="modal">
+<div class="flex">
+  <h2>Struk Invoice</h2>
+  <button class="btn" onclick="closeInvoice()">Tutup</button>
+</div>
+
+<div id="receipt" class="receipt"></div>
+
+<div class="actions">
+  <button class="btn btn-green" onclick="shareInvoice()">Bagikan Struk</button>
+  <button class="btn btn-pink" onclick="shareWhatsApp()">WhatsApp</button>
+  <button class="btn" onclick="savePNG()">Simpan PNG</button>
+  <button class="btn" onclick="window.print()">Cetak / PDF</button>
+  <button class="btn" onclick="copyInvoice()">Salin Teks</button>
+</div>
+<p class="note">
+Bagikan Struk menggunakan fitur berbagi perangkat. Jika tidak tersedia, gambar akan diunduh untuk dikirim manual.
+</p>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const KEY = "namira_tugas1naja_orders";
+let orders = [];
+let selectedId = null;
+
+try {
+  orders = JSON.parse(localStorage.getItem(KEY) || "[]");
+  if (!Array.isArray(orders)) orders = [];
+} catch {
+  orders = [];
+}
+
+const money = n => "Rp" + Number(n || 0).toLocaleString("id-ID");
+const escapeHTML = s => String(s ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const dateText = d => {
+  const x = new Date(d);
+  return isNaN(x) ? "-" : x.toLocaleString("id-ID",{
+    day:"2-digit",month:"2-digit",year:"numeric",
+    hour:"2-digit",minute:"2-digit"
+  });
+};
+const save = () => localStorage.setItem(KEY,JSON.stringify(orders));
+const findOrder = id => orders.find(o=>o.id===id);
+const remaining = o => Math.max(0,o.price-o.paid);
+const status = o => o.paid<=0 ? "belum" : o.paid>=o.price ? "lunas" : "dp";
+const statusLabel = s => ({belum:"BELUM BAYAR",dp:"DP",lunas:"LUNAS"})[s];
+
+function toast(msg) {
+  $("toast").textContent=msg;
+  $("toast").style.display="block";
+  setTimeout(()=>$("toast").style.display="none",3000);
+}
+
+function addReminder(value=1,unit="hari") {
+  const row=document.createElement("div");
+  row.className="rem-row";
+  row.innerHTML=`
+    <input type="number" min="1" value="${Number(value)||1}" class="rem-value">
+    <select class="rem-unit">
+      <option value="hari">Hari</option>
+      <option value="jam">Jam</option>
+      <option value="menit">Menit</option>
+    </select>
+    <button type="button" class="btn" onclick="this.parentElement.remove()">Hapus</button>
+  `;
+  row.querySelector("select").value=unit;
+  $("reminderRows").appendChild(row);
+}
+
+function getReminders() {
+  return [...document.querySelectorAll(".rem-row")].map(r=>({
+    value:Number(r.querySelector(".rem-value").value),
+    unit:r.querySelector(".rem-unit").value
+  })).filter(r=>r.value>0);
+}
+
+function resetForm() {
+  $("orderForm").reset();
+  $("editId").value="";
+  $("price").value=0;
+  $("paid").value=0;
+  $("formTitle").textContent="Tambah Order";
+  $("reminderRows").innerHTML="";
+  addReminder(3,"hari");
+  addReminder(6,"jam");
+}
+
+$("orderForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const price=Number($("price").value);
+  const paid=Number($("paid").value);
+  if(price<0||paid<0||paid>price) {
+    alert("Pembayaran tidak boleh negatif atau melebihi harga.");
+    return;
+  }
+  const editId=$("editId").value;
+  const old=editId?findOrder(editId):null;
+  const o={
+    id:old?.id||"NMR-"+Date.now().toString(36).toUpperCase(),
+    created:old?.created||new Date().toISOString(),
+    customer:$("customer").value.trim(),
+    phone4:$("phone4").value.trim(),
+    whatsapp:$("whatsapp").value.trim(),
+    kind:$("kind").value.trim(),
+    progress:$("progress").value,
+    topic:$("topic").value.trim(),
+    deadline:$("deadline").value,
+    details:$("details").value.trim(),
+    price,paid,
+    reminders:getReminders(),
+    notified:old?.deadline===$("deadline").value ? old.notified||[] : []
+  };
+  if(old) orders=orders.map(x=>x.id===editId?o:x);
+  else orders.unshift(o);
+  save();resetForm();render();toast("Order berhasil disimpan.");
+});
+
+function editOrder(id) {
+  const o=findOrder(id);if(!o)return;
+  for(const field of ["customer","phone4","whatsapp","kind","progress","topic","deadline","details","price"]) {
+    $(field).value=o[field]??"";
+  }
+  $("paid").value=o.paid;
+  $("editId").value=o.id;
+  $("formTitle").textContent="Edit Order / Pembayaran";
+  $("reminderRows").innerHTML="";
+  (o.reminders||[]).forEach(r=>addReminder(r.value,r.unit));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function deleteOrder(id) {
+  if(!confirm("Yakin ingin menghapus order?"))return;
+  orders=orders.filter(o=>o.id!==id);
+  save();render();toast("Order dihapus.");
+}
+
+function render() {
+  const now=Date.now();
+  $("sTotal").textContent=orders.length;
+  $("sNear").textContent=orders.filter(o=>
+    o.progress!=="Selesai" &&
+    new Date(o.deadline).getTime()>=now &&
+    new Date(o.deadline).getTime()<=now+3*86400000
+  ).length;
+  $("sPaid").textContent=money(orders.reduce((a,o)=>a+o.paid,0));
+  $("sDue").textContent=money(orders.reduce((a,o)=>a+remaining(o),0));
+
+  const search=$("search").value.toLowerCase();
+  const filter=$("filter").value;
+  const list=orders.filter(o=>{
+    const text=[o.customer,o.phone4,o.kind,o.topic,o.id].join(" ").toLowerCase();
+    return text.includes(search)&&(filter==="all"||status(o)===filter);
+  }).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+
+  $("orderList").innerHTML=list.length?list.map(o=>{
+    const st=status(o);
+    const overdue=new Date(o.deadline).getTime()<now&&o.progress!=="Selesai";
+    return `<article class="order">
+      <div class="flex">
+        <strong>${escapeHTML(o.customer)}</strong>
+        <span class="badge ${st}">${statusLabel(st)}</span>
+      </div>
+      <h3>${escapeHTML(o.topic)}</h3>
+      <p>
+        ${escapeHTML(o.kind)} · ${escapeHTML(o.id)}<br>
+        Deadline: ${dateText(o.deadline)} ${overdue?"(TERLEWAT)":""}<br>
+        Status: ${escapeHTML(o.progress)}
+      </p>
+      <div class="flex">
+        <strong>${money(o.price)}</strong>
+        <span>Sisa: ${money(remaining(o))}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-pink" data-act="invoice" data-id="${o.id}">Invoice</button>
+        <button class="btn btn-sage" data-act="calendar" data-id="${o.id}">Kalender</button>
+        <button class="btn" data-act="edit" data-id="${o.id}">Edit / Bayar</button>
+        <button class="btn btn-red" data-act="delete" data-id="${o.id}">Hapus</button>
+      </div>
+    </article>`;
+  }).join(""):"<p class='note'>Belum ada order.</p>";
+}
+
+$("orderList").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");
+  if(!b)return;
+  const {act,id}=b.dataset;
+  if(act==="invoice")openInvoice(id);
+  if(act==="calendar")downloadCalendar(id);
+  if(act==="edit")editOrder(id);
+  if(act==="delete")deleteOrder(id);
+});
+
+function invoiceText(o) {
+  return `NAMIRA TUGAS1NAJA
+INVOICE PEMESANAN
+--------------------------------
+No       : ${o.id}
+Tanggal  : ${dateText(o.created)}
+Pelanggan: ${o.customer}${o.phone4?" / "+o.phone4:""}
+--------------------------------
+Jenis    : ${o.kind}
+Judul    : ${o.topic}
+Deadline : ${dateText(o.deadline)}
+${o.details?"Catatan  : "+o.details+"\n":""}--------------------------------
+TOTAL    : ${money(o.price)} [${statusLabel(status(o))}]
+Dibayar  : ${money(o.paid)}
+Sisa     : ${money(remaining(o))}
+--------------------------------
+STATUS: ${statusLabel(status(o))}
+Terima kasih sudah order.
+Simpan struk sebagai bukti transaksi.`;
+}
+
+function openInvoice(id) {
+  const o=findOrder(id);if(!o)return;
+  selectedId=id;
+  const st=status(o);
+  $("receipt").innerHTML=`
+    <h3>NAMIRA TUGAS1NAJA</h3>
+    <div class="center">INVOICE PEMESANAN</div>
+    <div class="dash"></div>
+    <div>No: ${escapeHTML(o.id)}</div>
+    <div>Tanggal: ${dateText(o.created)}</div>
+    <div>Pelanggan: ${escapeHTML(o.customer)} ${escapeHTML(o.phone4)}</div>
+    <div class="dash"></div>
+    <div>Jenis: ${escapeHTML(o.kind)}</div>
+    <div>Judul: ${escapeHTML(o.topic)}</div>
+    <div>Deadline: ${dateText(o.deadline)}</div>
+    ${o.details?`<div>Catatan: ${escapeHTML(o.details)}</div>`:""}
+    <div class="dash"></div>
+    <div class="rline total">
+      <span>TOTAL</span>
+      <span>${money(o.price)} <span class="badge ${st}">${statusLabel(st)}</span></span>
+    </div>
+    <div class="rline"><span>Dibayar</span><span>${money(o.paid)}</span></div>
+    <div class="rline"><span>Sisa</span><span>${money(remaining(o))}</span></div>
+    <div class="dash"></div>
+    <div class="center total">${statusLabel(st)}</div>
+    <div class="center">Terima kasih sudah order.</div>
+    <div class="center">Simpan struk sebagai bukti transaksi.</div>`;
+  $("modal").style.display="flex";
+}
+
+function closeInvoice() {
+  $("modal").style.display="none";
+  selectedId=null;
+}
+
+function downloadBlob(blob,name) {
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+}
+
+function invoiceCanvas(o) {
+  const canvas=document.createElement("canvas");
+  const width=720,padding=45;
+  const ctx=canvas.getContext("2d");
+  const lines=invoiceText(o).split("\n");
+  const wrapped=[];
+  ctx.font="24px monospace";
+  lines.forEach(line=>{
+    let current="";
+    for(const word of line.split(" ")) {
+      const next=current?current+" "+word:word;
+      if(ctx.measureText(next).width>width-padding*2&&current) {
+        wrapped.push(current);current=word;
+      } else current=next;
+    }
+    wrapped.push(current);
+  });
+  canvas.width=width;
+  canvas.height=wrapped.length*41+100;
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.font="24px monospace";
+  ctx.fillStyle="#293b31";
+  wrapped.forEach((line,i)=>{
+    if(i===0) {
+      ctx.font="bold 28px monospace";
+      ctx.textAlign="center";
+      ctx.fillText(line,width/2,65+i*41);
+    } else {
+      ctx.font="24px monospace";
+      ctx.textAlign="left";
+      ctx.fillText(line,padding,65+i*41);
+    }
+  });
+  return canvas;
+}
+
+function getPNG(o) {
+  return new Promise(resolve=>invoiceCanvas(o).toBlob(resolve,"image/png"));
+}
+
+async function savePNG() {
+  const o=findOrder(selectedId);if(!o)return;
+  const blob=await getPNG(o);
+  if(blob)downloadBlob(blob,"Invoice-"+o.id+".png");
+}
+
+async function shareInvoice() {
+  const o=findOrder(selectedId);if(!o)return;
+  const blob=await getPNG(o);if(!blob)return;
+  const file=new File([blob],"Invoice-"+o.id+".png",{type:"image/png"});
+  try {
+    if(navigator.share&&navigator.canShare?.({files:[file]})) {
+      await navigator.share({files:[file],title:"Invoice "+o.id});
+      return;
+    }
+  } catch(err) {
+    if(err.name==="AbortError")return;
+  }
+  downloadBlob(blob,file.name);
+  toast("Struk disimpan. Silakan kirim lewat WhatsApp.");
+}
+
+function shareWhatsApp() {
+  const o=findOrder(selectedId);if(!o)return;
+  const number=(o.whatsapp||"").replace(/\D/g,"").replace(/^0/,"62");
+  const url="https://wa.me/"+number+"?text="+encodeURIComponent(invoiceText(o));
+  window.open(url,"_blank","noopener,noreferrer");
+}
+
+async function copyInvoice() {
+  const o=findOrder(selectedId);if(!o)return;
+  try {
+    await navigator.clipboard.writeText(invoiceText(o));
+    toast("Invoice berhasil disalin.");
+  } catch {toast("Clipboard tidak tersedia.");}
+}
+
+function calDate(d) {
+  const x=new Date(d);
+  return x.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
+}
+function calEscape(s) {
+  return String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");
+}
+function downloadCalendar(id) {
+  const o=findOrder(id);if(!o)return;
+  const deadline=new Date(o.deadline);
+  const alerts=(o.reminders||[]).map(r=>{
+    const minutes=r.value*(r.unit==="hari"?1440:r.unit==="jam"?60:1);
+    return `BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Deadline ${calEscape(o.topic)}
+TRIGGER:-PT${minutes}M
+END:VALARM`;
+  }).join("\r\n");
+  const ics=`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Namira Tugas1naja//ID
+BEGIN:VEVENT
+UID:${o.id}@namira.local
+DTSTAMP:${calDate(new Date())}
+DTSTART:${calDate(deadline)}
+DTEND:${calDate(new Date(deadline.getTime()+1800000))}
+SUMMARY:${calEscape("Deadline: "+o.topic)}
+DESCRIPTION:${calEscape(o.customer+" - "+o.details)}
+${alerts}
+END:VEVENT
+END:VCALENDAR`;
+  downloadBlob(new Blob([ics],{type:"text/calendar"}),"Pengingat-"+o.id+".ics");
+  toast("File kalender diunduh. Impor ke kalender HP.");
+}
+
+async function enableNotifications() {
+  if(!("Notification" in window)) {
+    toast("Browser tidak mendukung notifikasi.");return;
+  }
+  if(!window.isSecureContext) {
+    toast("Notifikasi memerlukan HTTPS.");return;
+  }
+  const permission=await Notification.requestPermission();
+  toast(permission==="granted"?"Notifikasi diaktifkan.":"Izin belum diberikan.");
+}
+
+function checkReminders() {
+  if(!("Notification" in window)||Notification.permission!=="granted")return;
+  const now=Date.now();
+  let changed=false;
+  orders.forEach(o=>{
+    if(o.progress==="Selesai")return;
+    const deadline=new Date(o.deadline).getTime();
+    if(!Number.isFinite(deadline))return;
+    (o.reminders||[]).forEach(r=>{
+      const minutes=r.value*(r.unit==="hari"?1440:r.unit==="jam"?60:1);
+      const key=`${o.deadline}-${r.value}-${r.unit}`;
+      o.notified=o.notified||[];
+      if(o.notified.includes(key))return;
+      const when=deadline-minutes*60000;
+      if(now>=when&&now<deadline) {
+        try {
+          new Notification("Namira Tugas1naja",{
+            body:`Deadline ${o.customer}: ${o.topic} — ${dateText(o.deadline)}`,
+            tag:o.id+key
+          });
+          o.notified.push(key);
+          changed=true;
+        } catch {}
+      }
+    });
+  });
+  if(changed)save();
+}
+
+function backup() {
+  downloadBlob(
+    new Blob([JSON.stringify(orders,null,2)],{type:"application/json"}),
+    "backup-namira.json"
+  );
+}
+
+async function importData(e) {
+  const file=e.target.files[0];if(!file)return;
+  try {
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data)||data.some(o=>
+      typeof o.id!=="string"||
+      typeof o.customer!=="string"||
+      typeof o.deadline!=="string"||
+      !Number.isFinite(o.price)||
+      !Number.isFinite(o.paid)
+    ))throw Error("Format salah");
+    if(!confirm("Ganti semua data dengan backup ini?"))return;
+    orders=data;save();render();
+    toast("Data berhasil diimpor.");
+  } catch {
+    alert("File backup tidak valid.");
+  }
+  e.target.value="";
+}
+
+resetForm();
+render();
+checkReminders();
+setInterval(checkReminders,30000);
+</script>
+</body>
+</html>
